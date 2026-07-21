@@ -55,7 +55,7 @@
     <section class="mjn">
       <div class="mjn-card">
         <a class="mjn-logo" href="https://miastojestnasze.org" target="_blank" rel="noopener">
-          <img src="miasto_jest_nasze.png" alt="Miasto Jest Nasze" width="486" height="91">
+          <img src="mjn_small_logo.png" alt="Miasto Jest Nasze" width="726" height="644">
         </a>
         <p class="mjn-text">Inicjatywę wspiera stowarzyszenie <strong>Miasto Jest Nasze</strong>, które przyłączy się do pozwów jako organizacja społeczna.</p>
       </div>
@@ -209,8 +209,12 @@
         <p>Odezwiemy się na podany adres e-mail w&nbsp;ciągu kilku dni.</p>
       </div>
 
-      <!-- FORMSPREE: podmień YOUR_FORM_ID na ID formularza z formspree.io -->
-      <form id="signup-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <!-- NETLIFY FORMS: działa po wdrożeniu na Netlify (data-netlify + hidden form-name) -->
+      <form id="signup-form" name="zgloszenie" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="zgloszenie">
+        <p hidden aria-hidden="true">
+          <label>Nie wypełniaj tego pola: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+        </p>
         <label class="field">
           <span class="field-label">Imię *</span>
           <input required type="text" name="imie" placeholder="np. Anna" autocomplete="given-name">
@@ -288,19 +292,31 @@
 (function () {
   var form = document.getElementById('signup-form');
   var thanks = document.getElementById('form-thanks');
+  var SENT_KEY = 'cw-zgloszenie-wyslane';
+
+  function showThanks(scroll) {
+    form.hidden = true;
+    thanks.hidden = false;
+    if (scroll) thanks.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  try {
+    if (localStorage.getItem(SENT_KEY)) showThanks(false);
+  } catch (err) { /* localStorage niedostępny (np. tryb prywatny) — ignorujemy */ }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var btn = form.querySelector('button[type=submit]');
     btn.disabled = true;
-    fetch(form.action, {
+    // Netlify Forms: POST na URL strony jako application/x-www-form-urlencoded
+    fetch('/', {
       method: 'POST',
-      body: new FormData(form),
-      headers: { 'Accept': 'application/json' }
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString()
     }).then(function (res) {
       if (res.ok) {
-        form.hidden = true;
-        thanks.hidden = false;
-        thanks.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        try { localStorage.setItem(SENT_KEY, String(Date.now())); } catch (err) {}
+        showThanks(true);
       } else {
         btn.disabled = false;
         alert('Nie udało się wysłać zgłoszenia. Spróbuj ponownie lub napisz na adres kontaktowy.');

@@ -4,22 +4,32 @@ Statyczna strona (HTML + CSS, bez frameworka) inicjatywy mieszkańców Warszawy 
 
 ## Pliki
 
-- `index.html` — cała treść strony + mały skrypt obsługi formularza (AJAX → Formspree)
+- `index.html` — cała treść strony + mały skrypt obsługi formularza (AJAX → Netlify Forms)
 - `style.css` — style (design tokens w `:root`)
+- `mjn_small_logo.png` — logo Miasto Jest Nasze
+
+## Formularz — Netlify Forms
+
+Formularz `name="zgloszenie"` używa wbudowanych Netlify Forms (darmowy limit: 100 zgłoszeń/mies.; spam wykryty przez Akismet nie wlicza się do limitu):
+
+- `data-netlify="true"` + ukryte pole `form-name` — wymagane przez Netlify.
+- **Honeypot** (`netlify-honeypot="bot-field"`) — ukryte pole; zgłoszenia z wypełnionym polem Netlify po cichu odrzuca.
+- Wysyłka AJAX-em (POST `/` jako `application/x-www-form-urlencoded`), po sukcesie formularz zamienia się w podziękowanie.
+- **localStorage** (`cw-zgloszenie-wyslane`) — po wysłaniu strona przy kolejnej wizycie od razu pokazuje podziękowanie (ochrona przed przypadkowym ponownym wysłaniem; czysto UX-owa).
+
+Po wdrożeniu: w panelu Netlify → **Forms → Notifications** ustaw powiadomienie e-mail na adres kontaktowy. Gdyby spam przechodził — włącz reCAPTCHA w ustawieniach Forms.
+
+## Hosting / deploy
+
+1. Netlify → **Add new site → Import from Git** → wskaż to repo. Build command: puste, Publish directory: `.` (root).
+2. Dodaj domenę własną w Netlify (Site → Domain management).
+3. W Cloudflare DNS dodaj rekord CNAME wskazujący na `<site>.netlify.app` — **z włączonym proxy (pomarańczowa chmurka)**, żeby dostać darmową ochronę DDoS i cache przed Netlify.
+4. E-mail: Cloudflare **Email Routing** → przekierowanie `kontakt@…` na prywatny Gmail; w Gmailu „Send mail as" przez `smtp.gmail.com` (hasło aplikacji).
 
 ## Przed startem — do podmiany
 
-1. **Formularz (Formspree):** załóż formularz na [formspree.io](https://formspree.io), skopiuj ID i podmień `YOUR_FORM_ID` w `index.html` (atrybut `action` formularza).
-2. **E-mail kontaktowy** w stopce (`kontakt@cisza-warszawa.pl` to placeholder).
-3. **URL poradnika** w sekcji „Zacznij zbierać dowody" (`instytut.ngo/dziennik-zdarzen-halasu`).
-
-## Hosting
-
-Strona jest czysto statyczna — działa wszędzie bez builda:
-
-- **GitHub Pages** — włączone w tym repo (deploy z gałęzi `main`, katalog `/`).
-- **Render** — New → Static Site → wskaż to repo; Build Command: puste, Publish Directory: `.`
-- **Netlify / Cloudflare Pages** — analogicznie: repo → deploy, bez komendy builda.
+1. **E-mail kontaktowy** w stopce (`kontakt@cisza-warszawa.pl` to placeholder — podmień na adres w kupionej domenie).
+2. **URL poradnika** w sekcji „Zacznij zbierać dowody" (`instytut.ngo/dziennik-zdarzen-halasu`).
 
 ## Dostępność / wydajność
 
