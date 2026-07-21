@@ -549,6 +549,7 @@ footer {
   justify-content: center;
   z-index: 50;
 }
+.sticky-cta[hidden] { display: none; }
 .sticky-cta-btn {
   display: block;
   width: 100%;

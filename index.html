@@ -201,7 +201,7 @@
     <!-- FORMULARZ -->
     <section id="zgloszenie">
       <h2>Zgłoś chęć udziału</h2>
-      <p class="section-intro">Jeżeli Twój komfort życia cierpi z&nbsp;powodu hałasu, a&nbsp;interwencje u&nbsp;władz miasta nie przynoszą skutku — rozważ udział w&nbsp;pozwie. Wypełnij formularz: krótko opisz swoją sytuację i&nbsp;wskaż, jakie dowody już posiadasz lub możesz zebrać. Im więcej osób się zgłosi, tym większa będzie nasza siła oddziaływania oraz możliwość podziału kosztów organizacyjnych. Zgłoszenie nie zobowiązuje do udziału w&nbsp;pozwie — najpierw porozmawiamy.</p>
+      <p class="section-intro" id="zgloszenie-intro">Jeżeli Twój komfort życia cierpi z&nbsp;powodu hałasu, a&nbsp;interwencje u&nbsp;władz miasta nie przynoszą skutku — rozważ udział w&nbsp;pozwie. Wypełnij formularz: krótko opisz swoją sytuację i&nbsp;wskaż, jakie dowody już posiadasz lub możesz zebrać. Im więcej osób się zgłosi, tym większa będzie nasza siła oddziaływania oraz możliwość podziału kosztów organizacyjnych. Zgłoszenie nie zobowiązuje do udziału w&nbsp;pozwie — najpierw porozmawiamy.</p>
 
       <div class="form-thanks" id="form-thanks" hidden>
         <div class="form-thanks-check" aria-hidden="true">✓</div>
@@ -291,12 +291,25 @@
 (function () {
   var form = document.getElementById('signup-form');
   var thanks = document.getElementById('form-thanks');
+  var intro = document.getElementById('zgloszenie-intro');
+  var sticky = document.querySelector('.sticky-cta');
   var SENT_KEY = 'cw-zgloszenie-wyslane';
+  var sent = false;
 
   function showThanks(scroll) {
+    sent = true;
     form.hidden = true;
+    intro.hidden = true;
+    sticky.hidden = true;
     thanks.hidden = false;
     if (scroll) thanks.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // Sticky CTA znika, gdy sekcja formularza jest widoczna (i po wysłaniu)
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      sticky.hidden = sent || entries[0].isIntersecting;
+    }, { rootMargin: '0px 0px -20% 0px' }).observe(document.getElementById('zgloszenie'));
   }
 
   try {
