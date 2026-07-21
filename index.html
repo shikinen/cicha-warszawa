@@ -182,7 +182,7 @@
             <div class="evidence-icon" aria-hidden="true">📱</div>
             <h3>Pomiary i&nbsp;materiały multimedialne</h3>
           </div>
-          <p>Zdjęcia i&nbsp;filmy pokazujące źródło hałasu, własne pomiary hałasu, dane z&nbsp;aplikacji (np. NoiseCapture), dane z&nbsp;urządzeń typu smartwatch (np. zaburzenia snu w&nbsp;dniach z&nbsp;największym hałasem).</p>
+          <p>Zdjęcia i&nbsp;filmy pokazujące źródło hałasu, własne pomiary z&nbsp;aplikacji — <a href="https://apps.apple.com/us/app/niosh-sound-level-meter/id1096545820" target="_blank" rel="noopener">NIOSH Sound Level Meter (iOS)</a> lub <a href="https://play.google.com/store/apps/details?id=org.noise_planet.noisecapture" target="_blank" rel="noopener">NoiseCapture (Android)</a> — oraz dane z&nbsp;urządzeń typu smartwatch (np. zaburzenia snu w&nbsp;dniach z&nbsp;największym hałasem).</p>
         </div>
         <div class="evidence-card">
           <div class="evidence-head">
@@ -300,7 +300,7 @@
     sent = true;
     form.hidden = true;
     intro.hidden = true;
-    sticky.hidden = true;
+    sticky.classList.add('is-hidden');
     thanks.hidden = false;
     if (scroll) thanks.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
@@ -308,7 +308,7 @@
   // Sticky CTA znika, gdy sekcja formularza jest widoczna (i po wysłaniu)
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
-      sticky.hidden = sent || entries[0].isIntersecting;
+      sticky.classList.toggle('is-hidden', sent || entries[0].isIntersecting);
     }, { rootMargin: '0px 0px -20% 0px' }).observe(document.getElementById('zgloszenie'));
   }
 
